@@ -1,0 +1,24 @@
+name: Build APK
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython==0.29.33
+          pip install https://github.com/kivy/python-for-android/archive/master.zip
+          sudo apt update
+          sudo apt install -y openjdk-17-jdk zip unzip
+      - name: Build
+        run: yes | buildozer --allow-root android debug
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: SuperTrader-APK
+          path: bin/*.apk
